@@ -1,0 +1,52 @@
+import math
+
+Exo_Name = input("What is the name of the exoplanet? ")
+Mass_Jupiter = 1.898 * (10 ** 27)
+Radius_Jupiter = 6.989 * (10 ** 7)
+Sigma = 2 * (10 ** 5)
+k = 1.15
+Beta_s = 0.01
+e = 1.602 * (10 ** -19)
+Mass_e = 9.109 * (10 ** -31)
+G = 6.674 * (10 ** -11)
+Upper_Omega = 0.2
+mu_o = 1.256 * (10 ** -6)
+Period_Jupiter = 35700
+L_yrs = float(input(f"How many light years away is {Exo_Name}? "))
+d = 9.461 * (10 ** 15)
+Exo_d = d * L_yrs
+Exoplanet_Mj = float(input(f"How many Jupiter masses is {Exo_Name}? "))
+Exoplanet_kg = Exoplanet_Mj * Mass_Jupiter
+Lower_Omega = 1.76 * (10 ** -4)
+R_E = 6371000
+rho_s_high = 1.661 * (10 ** -15)
+rho_s_low = 1.661 * (10 ** -17)
+old_S = float(input("How many micro Jy is the sensitivity of the telescope? "))
+S = old_S * (10 ** -32)
+r_opx = ((5.4 * ((Exoplanet_Mj) ** 0.32)) * (Radius_Jupiter))
+
+B_s = ((10 ** -12) / (r_opx ** 3)) * ((((Exoplanet_kg) * (Sigma)) / (Period_Jupiter)) ** k)
+
+B_p = 2 * (B_s) * (((r_opx)/(Radius_Jupiter)) ** 3)
+
+Cyclotron_Flux = ((e) * (B_p)) / ((2 * math.pi) * (Mass_e))
+Delta_f = Cyclotron_Flux / 2
+
+V_o = (Lower_Omega * r_opx) - ((((G) * (Exoplanet_kg)) / (r_opx)) ** (1/2))
+
+P_rad = Delta_f * Upper_Omega * (Exo_d ** 2) * S
+
+R_s_upper = (((mu_o * P_rad) / (math.pi * Beta_s * (B_s ** 2) * V_o)) * ((rho_s_low) / ((rho_s_low) + ((1/mu_o) * ((B_s / V_o) ** 2)))) ** (-1/2)) ** (1/2)
+R_s_upper = R_s_upper / R_E
+R_s_lower = (((mu_o * P_rad) / (math.pi * Beta_s * (B_s ** 2) * V_o)) * ((rho_s_high) / ((rho_s_high) + ((1/mu_o) * ((B_s / V_o) ** 2)))) ** (-1/2)) ** (1/2)
+R_s_lower = R_s_lower / R_E
+
+print(f'{Exo_Name} has the following values:')
+print(f'r_opx = {round(r_opx)} m')
+print(f'B_s  = {round(B_s, 9)} T')
+print(f'B_p  = {round(B_p, 5)}')
+print(f'Cyclotron_Flux = {round(Cyclotron_Flux)} Hz')
+print(f'V_o = {round(V_o)}')
+print(f'P_rad  = {round(P_rad)} w')
+
+print(f'Detectable exomoons at sensitivity {(old_S)} micro Jy will have a radius between {round(R_s_lower, 3)} and {round(R_s_upper, 3)} Earth radii')
